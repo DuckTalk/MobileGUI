@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/drawable/background_icon.xml" value="0.12" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/drawable/background_image.xml" value="0.171" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/drawable/background_input.xml" value="0.1" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/drawable/ic_launcher_background.xml" value="0.121" />
@@ -10,6 +11,7 @@
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/layout/activity_sign_in.xml" value="0.16799999999999998" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/layout/activity_sign_in2.xml" value="0.1" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/layout/activity_sign_up.xml" value="0.16302083333333334" />
+        <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/layout/activity_users.xml" value="0.25" />
         <entry key="..\:/Users/rmiti/AndroidStudioProjects/PlatConnect/app/src/main/res/layout/item_container_user.xml" value="0.176" />
       </map>
     </option>
