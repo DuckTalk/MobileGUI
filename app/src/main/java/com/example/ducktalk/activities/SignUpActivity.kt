@@ -4,12 +4,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Base64
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ducktalk.activities.utilities.PreferenceManager
 import com.example.ducktalk.databinding.ActivitySignUpBinding
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
@@ -19,11 +21,13 @@ class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
     private var encodedImage: String? = null
+    private lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        preferenceManager = PreferenceManager(applicationContext)
         setListeners()
     }
 
@@ -35,6 +39,11 @@ class SignUpActivity : AppCompatActivity() {
 
             }
         }
+        binding.layoutImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            pickImage.launch(intent)
+        }
     }
 
     private fun showToast(message: String) {
@@ -42,7 +51,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun signUp() {
-        // Add your sign-up code here
+        // Add your sign-up code here (Auf ABI warten)
     }
 
     private fun encodeImage(bitmap: Bitmap): String {
@@ -73,8 +82,6 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun isValidSignUpDetails(): Boolean {
         return when {
