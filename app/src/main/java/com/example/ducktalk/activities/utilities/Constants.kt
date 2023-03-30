@@ -8,4 +8,5 @@ package com.example.ducktalk.activities.utilities
     const val KEY_IS_SIGNED_IN = "isSignedIn"
     const val KEY_USER_ID = "userid"
     const val KEY_IMAGE = "image"
+    const val KEY_FCM_TOKEN = "fcmToken"
 }
