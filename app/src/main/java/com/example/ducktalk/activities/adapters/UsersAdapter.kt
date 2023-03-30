@@ -6,8 +6,8 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ducktalk.activities.databinding.ItemContainerUserBinding
 import com.example.ducktalk.activities.models.User
-import com.example.ducktalk.databinding.ItemContainerUserBinding
 
 class UsersAdapter(private val users: List<User>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 

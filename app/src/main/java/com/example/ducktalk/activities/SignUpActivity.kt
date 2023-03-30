@@ -1,57 +1,78 @@
 package com.example.ducktalk.activities
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Base64
-import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ducktalk.activities.utilities.PreferenceManager
-import com.example.ducktalk.databinding.ActivitySignUpBinding
+import com.example.ducktalk.activities.databinding.ActivitySignUpBinding
+import com.example.ducktalk.activities.models.User
+import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
 class SignUpActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySignUpBinding
     private var encodedImage: String? = null
-    private lateinit var preferenceManager: PreferenceManager
+    private lateinit var binding: ActivitySignUpBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        preferenceManager = PreferenceManager(applicationContext)
-        setListeners()
-    }
 
-    private fun setListeners() {
-        binding.textSignIn.setOnClickListener { onBackPressed() }
         binding.buttonSignUp.setOnClickListener {
-            if (isValidSignUpDetails()) {
-                signUp()
-
+            // Validate input fields
+            if (binding.inputName.text.toString().isEmpty()) {
+                binding.inputName.error = getString(R.string.name)
+                return@setOnClickListener
             }
-        }
-        binding.layoutImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            pickImage.launch(intent)
-        }
-    }
+            if (binding.inputEmail.text.toString().isEmpty()) {
+                binding.inputEmail.error = getString(R.string.email)
+                return@setOnClickListener
+            }
+            if (binding.inputPassword.text.toString().isEmpty()) {
+                binding.inputPassword.error = getString(R.string.password)
+                return@setOnClickListener
+            }
+            if (binding.inputConfirmPassword.text.toString().isEmpty()) {
+                binding.inputConfirmPassword.error = getString(R.string.confirm_password)
+                return@setOnClickListener
+            }
+            if (binding.inputPassword.text.toString() != binding.inputConfirmPassword.text.toString()) {
+                binding.inputConfirmPassword.error = getString(R.string.confirm_password_not_same)
+                return@setOnClickListener
+            }
 
-    private fun showToast(message: String) {
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
+            // Register user with input data
+            val name = binding.inputName.text.toString()
+            val email = binding.inputEmail.text.toString()
+            val password = binding.inputPassword.text.toString()
 
-    private fun signUp() {
-        // Add your sign-up code here (Auf ABI warten)
+            // Create an instance of your user model class
+            val user = encodedImage?.let { it1 -> User(name, email, password, it1) }
+
+            // Save the user data to SharedPreferences or your database
+            val sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putString(getString(R.string.saved_user), Gson().toJson(user))
+                apply()
+            }
+
+            // Show registration success message
+            Toast.makeText(this, R.string.toast_registration_successful, Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        binding.textAddImage.setOnClickListener {
+            pickImage.launch(Intent(Intent.ACTION_PICK).setType("image/*"))
+        }
     }
 
     private fun encodeImage(bitmap: Bitmap): String {
@@ -80,50 +101,6 @@ class SignUpActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-        }
-    }
-
-    private fun isValidSignUpDetails(): Boolean {
-        return when {
-            encodedImage == null -> {
-                showToast("Select profile image")
-                false
-            }
-            binding.inputName.text.toString().trim().isEmpty() -> {
-                showToast("Enter name")
-                false
-            }
-            binding.inputEmail.text.toString().trim().isEmpty() -> {
-                showToast("Enter email")
-                false
-            }
-            !Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.text.toString()).matches() -> {
-                showToast("Enter valid email")
-                false
-            }
-            binding.inputPassword.text.toString().trim().isEmpty() -> {
-                showToast("Enter password")
-                false
-            }
-            binding.inputConfirmPassword.text.toString().trim().isEmpty() -> {
-                showToast("Confirm password")
-                false
-            }
-            !binding.inputPassword.text.toString().equals(binding.inputConfirmPassword.text.toString()) -> {
-                showToast("Password and confirm password must be the same")
-                false
-            }
-            else -> true
-        }
-    }
-
-    private fun loading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.buttonSignUp.visibility = View.INVISIBLE
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.INVISIBLE
-            binding.buttonSignUp.visibility = View.VISIBLE
         }
     }
 }
