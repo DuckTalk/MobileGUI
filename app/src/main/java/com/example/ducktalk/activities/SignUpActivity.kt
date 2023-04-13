@@ -1,6 +1,5 @@
 package com.example.ducktalk.activities
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,6 +9,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.ducktalk.activities.databinding.ActivitySignUpBinding
 import com.example.ducktalk.activities.models.User
 import com.google.gson.Gson
@@ -59,15 +60,9 @@ class SignUpActivity : AppCompatActivity() {
             val user = encodedImage?.let { it1 -> User(name, email, password, it1) }
 
             // Save the user data to SharedPreferences or your database
-            val sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putString(getString(R.string.saved_user), Gson().toJson(user))
-                apply()
+            if (user != null) {
+                registerUser(user)
             }
-
-            // Show registration success message
-            Toast.makeText(this, R.string.toast_registration_successful, Toast.LENGTH_SHORT).show()
-            finish()
         }
 
         binding.textAddImage.setOnClickListener {
@@ -102,5 +97,55 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun registerUser(user: User) {
+        // Instantiate the RequestQueue
+        val queue = Volley.newRequestQueue(this)
+
+        // Set up the URL and request headers
+        val url = "http://ableytner.ddns.net:2007/user/register"
+        val headers = HashMap<String, String>()
+        headers["Content-Type"] = "application/json"
+
+        // Create the request body
+        val requestBody = Gson().toJson(user)
+
+        // Create a POST request
+        val jsonObjectRequest = object : JsonObjectRequest(
+            Method.POST,
+            url,
+            null,
+            { response ->
+                // Handle the response from the server
+                val success = response.getBoolean("success")
+                if (success) {
+                    // Show registration success message
+                    Toast.makeText(this, R.string.toast_registration_successful, Toast.LENGTH_SHORT)
+                        .show()
+                    finish()
+                } else {
+                    val errorMessage = response.getString("message")
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                // Handle errors that occurred while making the request
+                Toast.makeText(this, R.string.toast_registration_failure, Toast.LENGTH_SHORT).show()
+                error.printStackTrace()
+            }) {
+            // Override the getBody method to return the request body
+            override fun getBody(): ByteArray {
+                return requestBody.toByteArray()
+            }
+
+            // Override the getHeaders method to return the request headers
+            override fun getHeaders(): MutableMap<String, String> {
+                return headers
+            }
+        }
+
+        // Add the request to the RequestQueue
+        queue.add(jsonObjectRequest)
     }
 }

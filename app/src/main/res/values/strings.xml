@@ -15,4 +15,5 @@
     <string name="preference_file_key">ducktalk_preferences</string>
     <string name="saved_user">Saved User</string>
     <string name="toast_registration_successful">Registration successful!</string>
+    <string name="toast_registration_failure">Could not Register</string>
 </resources>

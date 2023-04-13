@@ -6,9 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.ducktalk.activities.databinding.ActivityMainBinding
 import com.example.ducktalk.activities.utilities.Constants
 import com.example.ducktalk.activities.utilities.PreferenceManager
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,12 +25,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         preferenceManager = PreferenceManager(applicationContext)
         loadUserDetails()
-        /**getToken()**/
+        getToken()
         setListeners()
     }
 
     private fun setListeners() {
-        /**binding.imageSignOut.setOnClickListener { signOut() }**/
+        binding.imageSignOut.setOnClickListener { signOut() }
         binding.fabNewChat.setOnClickListener { startActivity(Intent(applicationContext, UsersActivity::class.java)) }
     }
 
@@ -41,30 +45,50 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
-    /**private fun getToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener(this@MainActivity, this::updateToken)
+    private fun getToken() {
+        val url = "http://ableytner.ddns.net:2007/api/get-fcm-token/${preferenceManager.getString(Constants.KEY_USER_ID)}"
+        val request = JsonObjectRequest(Request.Method.GET, url, null,
+            { response ->
+                val token = response.getString(Constants.KEY_FCM_TOKEN)
+                updateToken(token)
+            },
+            { error ->
+                showToast("Unable to get token")
+                error.printStackTrace()
+            })
+        Volley.newRequestQueue(applicationContext).add(request)
     }
 
     private fun updateToken(token: String) {
-        val database = FirebaseFirestore.getInstance()
-        val documentReference = database.collection(Constants.KEY_COLLECTION_USERS).document(preferenceManager.getString(Constants.KEY_USER_ID))
-        documentReference.update(Constants.KEY_FCM_TOKEN, token)
-            .addOnFailureListener { e -> showToast("Unable to update token") }
+        val url = "http://ableytner.ddns.net:2007/api/update-fcm-token"
+        val requestBody = JSONObject()
+        requestBody.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+        requestBody.put(Constants.KEY_FCM_TOKEN, token)
+        val request = JsonObjectRequest(Request.Method.PUT, url, requestBody,
+            { response ->
+                showToast("Token updated successfully")
+            },
+            { error ->
+                showToast("Unable to update token")
+                error.printStackTrace()
+            })
+        Volley.newRequestQueue(applicationContext).add(request)
     }
 
     private fun signOut() {
         showToast("Signing out...")
-        val database = FirebaseFirestore.getInstance()
-        val documentReference = database.collection(Constants.KEY_COLLECTION_USERS).document(preferenceManager.getString(Constants.KEY_USER_ID))
-        val updates = HashMap<String, Any>()
-        updates[Constants.KEY_FCM_TOKEN] = FieldValue.delete()
-        documentReference.update(updates)
-            .addOnSuccessListener {
+        val url = "http://ableytner.ddns.net:2007/api/delete-fcm-token/${preferenceManager.getString(Constants.KEY_USER_ID)}"
+        val request = JsonObjectRequest(
+            Request.Method.DELETE, url, null,
+            { response ->
                 preferenceManager.clear()
                 startActivity(Intent(applicationContext, SignInActivity::class.java))
                 finish()
-            }
-            .addOnFailureListener { e -> showToast("Unable to sign out") }**/
+            },
+            { error ->
+                showToast("Unable to sign out")
+                error.printStackTrace()
+            })
+        Volley.newRequestQueue(applicationContext).add(request)
     }
 }
-
