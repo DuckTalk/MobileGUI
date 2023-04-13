@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.platconnect"
-        minSdk 16
+        minSdk 9
         targetSdk 26
         versionCode 1
         versionName "1.0"
