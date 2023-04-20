@@ -16,4 +16,5 @@
     <string name="saved_user">Saved User</string>
     <string name="toast_registration_successful">Registration successful!</string>
     <string name="toast_registration_failure">Could not Register</string>
+    <string name="type_a_message">Type a message</string>
 </resources>

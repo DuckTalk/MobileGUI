@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DuckTalk">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".UsersActivity"
             android:exported="false" />
         <activity

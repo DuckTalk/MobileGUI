@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         requestBody.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
         requestBody.put(Constants.KEY_FCM_TOKEN, token)
         val request = JsonObjectRequest(Request.Method.PUT, url, requestBody,
-            { response ->
+            { _ ->
                 showToast("Token updated successfully")
             },
             { error ->
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         val url = "http://ableytner.ddns.net:2007/api/delete-fcm-token/${preferenceManager.getString(Constants.KEY_USER_ID)}"
         val request = JsonObjectRequest(
             Request.Method.DELETE, url, null,
-            { response ->
+            { _ ->
                 preferenceManager.clear()
                 startActivity(Intent(applicationContext, SignInActivity::class.java))
                 finish()
