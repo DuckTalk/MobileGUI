@@ -1,4 +1,4 @@
-package com.example.ducktalk.activities.adapters
+package com.example.ducktalk.adapters
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ducktalk.activities.databinding.ItemContainerUserBinding
-import com.example.ducktalk.activities.models.User
+import com.example.ducktalk.models.User
 
 class UsersAdapter(private val users: List<User>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 

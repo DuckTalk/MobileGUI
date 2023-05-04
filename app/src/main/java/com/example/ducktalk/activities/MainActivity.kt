@@ -10,8 +10,8 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.ducktalk.activities.databinding.ActivityMainBinding
-import com.example.ducktalk.activities.utilities.Constants
-import com.example.ducktalk.activities.utilities.PreferenceManager
+import com.example.ducktalk.utilities.Constants
+import com.example.ducktalk.utilities.PreferenceManager
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getToken() {
-        val url = "http://ableytner.ddns.net:2007/api/get-fcm-token/${preferenceManager.getString(Constants.KEY_USER_ID)}"
+        val url = "http://ableytner.ddns.net:2006${preferenceManager.getString(Constants.KEY_USER_ID)}"
         val request = JsonObjectRequest(Request.Method.GET, url, null,
             { response ->
                 val token = response.getString(Constants.KEY_FCM_TOKEN)
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateToken(token: String) {
-        val url = "http://ableytner.ddns.net:2007/api/update-fcm-token"
+        val url = "http://ableytner.ddns.net:2006"
         val requestBody = JSONObject()
         requestBody.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
         requestBody.put(Constants.KEY_FCM_TOKEN, token)
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun signOut() {
         showToast("Signing out...")
-        val url = "http://ableytner.ddns.net:2007/api/delete-fcm-token/${preferenceManager.getString(Constants.KEY_USER_ID)}"
+        val url = "http://ableytner.ddns.net:2006${preferenceManager.getString(Constants.KEY_USER_ID)}"
         val request = JsonObjectRequest(
             Request.Method.DELETE, url, null,
             { _ ->

@@ -1,4 +1,4 @@
-package com.example.ducktalk.activities.models
+package com.example.ducktalk.models
 
 import java.io.Serializable
 

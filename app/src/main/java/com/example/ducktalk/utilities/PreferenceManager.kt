@@ -1,4 +1,4 @@
-package com.example.ducktalk.activities.utilities
+package com.example.ducktalk.utilities
 
 import android.content.Context
 

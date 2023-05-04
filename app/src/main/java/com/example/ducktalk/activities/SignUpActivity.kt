@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.ducktalk.activities.databinding.ActivitySignUpBinding
-import com.example.ducktalk.activities.models.User
+import com.example.ducktalk.models.User
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
@@ -104,7 +104,7 @@ class SignUpActivity : AppCompatActivity() {
         val queue = Volley.newRequestQueue(this)
 
         // Set up the URL and request headers
-        val url = "http://ableytner.ddns.net:2007/user/register"
+        val url = "http://ableytner.ddns.net:2006"
         val headers = HashMap<String, String>()
         headers["Content-Type"] = "application/json"
 

@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.ducktalk.utilities.Constants
 import com.google.android.material.button.MaterialButton
 import org.json.JSONException
 import org.json.JSONObject
@@ -19,7 +20,7 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var inputPassword: EditText
     private lateinit var buttonSignIn: MaterialButton
     private lateinit var textCreateNewAccount: TextView
-    private val serverUrl = "http://ableytner.ddns.net:2007"
+    private val serverUrl = "http://ableytner.ddns.net:2006"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +41,8 @@ class SignInActivity : AppCompatActivity() {
                 // If the email and password are valid, check if they match the stored user credentials on the server
                 val url = "$serverUrl/login"
                 val jsonBody = JSONObject()
-                jsonBody.put("email", email)
-                jsonBody.put("password", password)
+                jsonBody.put(Constants.KEY_EMAIL, email)
+                jsonBody.put(Constants.KEY_PASSWORD, password)
 
                 val request = JsonObjectRequest(
                     Request.Method.POST, url, jsonBody,
