@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MobileGUI.iml" filepath="$PROJECT_DIR$/.idea/MobileGUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/communicationboard.iml" filepath="$PROJECT_DIR$/.idea/modules/communicationboard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/communicationboard.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/communicationboard.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/communicationboard.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/communicationboard.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/communicationboard.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/communicationboard.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/communicationboard.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/communicationboard.app.unitTest.iml" />
     </modules>
   </component>
 </project>
