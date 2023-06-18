@@ -52,7 +52,10 @@ class SignInActivity : AppCompatActivity() {
                             if (success) {
                                 // If the user credentials are valid, show a toast message indicating successful login
                                 Toast.makeText(this, "Logged in successfully!", Toast.LENGTH_SHORT).show()
-                                // You can also start a new activity here to go to the user's home screen
+                                // Start MainActivity
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish() // Finish the SignInActivity to prevent going back to it after login
                             } else {
                                 // If the user credentials are not valid, show an error message
                                 Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()

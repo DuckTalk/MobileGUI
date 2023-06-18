@@ -1,109 +1,159 @@
 package com.example.ducktalk.activities
 
+import android.content.Context
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ducktalk.activities.databinding.ActivityUsersBinding
-import com.example.ducktalk.adapters.UsersAdapter
-import com.example.ducktalk.models.User
-import com.example.ducktalk.utilities.Constants
-import com.example.ducktalk.utilities.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import org.json.JSONArray
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
 
-class UsersActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityUsersBinding
-    private lateinit var preferenceManager: PreferenceManager
-    private lateinit var usersAdapter: UsersAdapter
+class UserActivity : AppCompatActivity() {
+
+    private val TAG = "UserActivity"
+    private val baseUrl = "http://ableytner.ddns.net:2006"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUsersBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        preferenceManager = PreferenceManager(applicationContext)
-        setListeners()
-        getUsers()
+        setContentView(R.layout.activity_users)
+
+        // Call functions here
     }
 
-    private fun setListeners() {
-        binding.imageBack.setOnClickListener { onBackPressed() }
-    }
-
-    private fun getUsers() {
-        loading(true)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val client = OkHttpClient()
-                val request = okhttp3.Request.Builder()
-                    .url("http://ableytner.ddns.net:2006")
-                    .build()
+    private fun createNewUser(username: String, email: String, password: String) {
+        GlobalScope.launch {
+            val client = OkHttpClient()
+            val url = "$baseUrl/api/user"
+            val mediaType = "application/json; charset=utf-8".toMediaType()
+            val requestBody = JSONObject().apply {
+                put("username", username)
+                put("email", email)
+                put("pw_hash", password)
+            }.toString().toRequestBody(mediaType)
+            val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+            withContext(Dispatchers.IO) {
                 val response = client.newCall(request).execute()
-                val body = response.body?.string()
-                if (body != null) {
-                    val users = parseUsers(body)
-                    withContext(Dispatchers.Main) {
-                        showUsers(users)
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        showErrorMessage()
-                    }
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    Log.d(TAG, responseBody)
                 }
+            }
+        }
+    }
+
+    private fun getUserById(userId: Int) {
+        GlobalScope.launch {
+            val client = OkHttpClient()
+            val url = "$baseUrl/api/user/$userId"
+            val request = Request.Builder()
+                .url(url)
+                .build()
+            withContext(Dispatchers.IO) {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    Log.d(TAG, responseBody)
+                }
+            }
+        }
+    }
+
+    private fun sendMessage(senderId: Int, receiverType: String, receiverId: Int, content: String) {
+        GlobalScope.launch {
+            val client = OkHttpClient()
+            val url = "$baseUrl/api/message"
+            val mediaType = "application/json; charset=utf-8".toMediaType()
+            val requestBody = JSONObject().apply {
+                put("sender_id", senderId)
+                put("receiver", JSONObject().apply {
+                    put("type", receiverType)
+                    put("user_id", receiverId)
+                })
+                put("content", content)
+            }.toString().toRequestBody(mediaType)
+            val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+            withContext(Dispatchers.IO) {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    Log.d(TAG, responseBody)
+                }
+            }
+        }
+    }
+
+    private fun getSalt(email: String) {
+        GlobalScope.launch {
+            val client = OkHttpClient()
+            val url = "$baseUrl/api/salt?email=$email"
+            val request = Request.Builder()
+                .url(url)
+                .build()
+            withContext(Dispatchers.IO) {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    Log.d(TAG, responseBody)
+                }
+            }
+        }
+    }
+
+    private fun saveToken(token: String) {
+        val sharedPreferences = getSharedPreferences("DuckTalkPreference", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("token", token)
+        editor.apply()
+    }
+
+
+    private fun requestToken(email: String, password: String) {
+        GlobalScope.launch {
+            val client = OkHttpClient()
+            val url = "$baseUrl/api/token"
+            val mediaType = "application/json; charset=utf-8".toMediaType()
+            val requestBody = JSONObject().apply {
+                put("email", email)
+                put("pw_hash", password)
+            }.toString().toRequestBody(mediaType)
+            val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+            try {
+                val response = client.newCall(request).execute()
+                val responseData = response.body?.string()
+                val jsonObject = JSONObject(responseData)
+                val token = jsonObject.getString("token")
+                saveToken(token)
             } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    showErrorMessage()
-                }
+// handle network or server errors here
+            } catch (e: JSONException) {
+// handle JSON parsing errors here
             }
-            loading(false)
         }
     }
 
-    private fun parseUsers(responseBody: String): List<User> {
-        val users: MutableList<User> = ArrayList()
-        val jsonArray = JSONArray(responseBody)
-        val currentUserId = preferenceManager.getString(Constants.KEY_USER_ID)
-        for (i in 0 until jsonArray.length()) {
-            val jsonObject = jsonArray.getJSONObject(i)
-            if (currentUserId == jsonObject.getString("id")) {
-                continue
-            }
-            val user = User()
-            user.name = jsonObject.getString(Constants.KEY_NAME)
-            user.email = jsonObject.getString(Constants.KEY_EMAIL)
-            user.image = jsonObject.getString(Constants.KEY_IMAGE)
-            user.token = jsonObject.getString(Constants.KEY_FCM_TOKEN)
-            users.add(user)
-        }
-        return users
-    }
-
-    private fun showUsers(users: List<User>) {
-        if (users.isNotEmpty()) {
-            usersAdapter = UsersAdapter(users)
-            binding.usersRecyclerView.layoutManager = LinearLayoutManager(this)
-            binding.usersRecyclerView.adapter = usersAdapter
-            binding.usersRecyclerView.visibility = View.VISIBLE
-        } else {
-            showErrorMessage()
-        }
-    }
-
-    private fun showErrorMessage() {
-        binding.textErrorMessage.text = String.format("%s", "No user available")
-        binding.textErrorMessage.visibility = View.VISIBLE
-    }
-
-    private fun loading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.INVISIBLE
-        }
+    private fun deleteToken() {
+        val sharedPreferences = getSharedPreferences("DuckTalkPreference", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("token")
+        editor.apply()
     }
 }
+
+

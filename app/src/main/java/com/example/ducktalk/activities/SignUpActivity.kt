@@ -123,6 +123,12 @@ class SignUpActivity : AppCompatActivity() {
                     // Show registration success message
                     Toast.makeText(this, R.string.toast_registration_successful, Toast.LENGTH_SHORT)
                         .show()
+
+                    // Start SignInActivity upon successful registration
+                    val intent = Intent(this, SignInActivity::class.java)
+                    startActivity(intent)
+
+                    // Finish the current activity
                     finish()
                 } else {
                     val errorMessage = response.getString("message")

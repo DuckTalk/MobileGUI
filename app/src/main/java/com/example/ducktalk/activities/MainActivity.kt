@@ -14,6 +14,13 @@ import com.example.ducktalk.utilities.Constants
 import com.example.ducktalk.utilities.PreferenceManager
 import org.json.JSONObject
 
+class UsersActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_users)
+    }
+}
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

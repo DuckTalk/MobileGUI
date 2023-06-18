@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ducktalk.activities">
+    package="com.example.platconnect">
 
     <application
         android:allowBackup="true"
@@ -11,16 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DuckTalk">
         <activity
-            android:name=".ChatActivity"
+            android:name="com.example.ducktalk.activities.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".UsersActivity"
+            android:name="com.example.ducktalk.activities.UsersActivity"
             android:exported="false" />
         <activity
-            android:name=".SignUpActivity"
+            android:name="com.example.ducktalk.activities.SignUpActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".SignInActivity"
+            android:name="com.example.ducktalk.activities.SignInActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.example.ducktalk.activities.MainActivity" />
     </application>
 
 </manifest>
