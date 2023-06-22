@@ -25,7 +25,6 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_users)
 
-        // Call functions here
     }
 
     private fun createNewUser(username: String, email: String, password: String) {
@@ -141,9 +140,9 @@ class UserActivity : AppCompatActivity() {
                 val token = jsonObject.getString("token")
                 saveToken(token)
             } catch (e: IOException) {
-// handle network or server errors here
+
             } catch (e: JSONException) {
-// handle JSON parsing errors here
+
             }
         }
     }

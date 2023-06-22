@@ -37,28 +37,23 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        // Initialize RecyclerView and adapter
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
         messageAdapter = MessageAdapter()
         chatRecyclerView.adapter = messageAdapter
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Create a Retrofit instance
         val retrofit = Retrofit.Builder()
             .baseUrl("http://ableytner.ddns.net:2006") // Replace with your API base URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        // Create an ApiService instance
         apiService = retrofit.create(ApiService::class.java)
 
-        // Example: Sending a message
         val messageText = "Hello, world!"
         sendMessage(messageText, isSent = true)
     }
 
     private fun sendMessage(messageText: String, isSent: Boolean) {
-        // Show progress bar or perform other necessary actions
 
         val senderId = 225 // Replace with the actual sender ID
         val receiverData = ReceiverData("user", 92) // Replace with the actual receiver data
@@ -68,26 +63,19 @@ class ChatActivity : AppCompatActivity() {
             try {
                 val response = apiService.sendMessage(requestData)
                 if (!response.error) {
-                    // Message sent successfully, display it
                     displayMessage(messageText, isSent)
                 } else {
-                    // Handle error case
                     Toast.makeText(this@ChatActivity, "Failed to send message", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                // Handle network or API error
                 Toast.makeText(this@ChatActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             } finally {
-                // Hide progress bar or perform other necessary actions
             }
         }
     }
 
     private fun displayMessage(messageText: String, isSent: Boolean) {
-        // Add your logic to display the sent/received message
-        // Create a Message object, update the adapter, etc.
 
-        // Example:
         val message = Message(messageText, isSent)
         messageAdapter.addMessage(message)
         chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
@@ -166,7 +154,6 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bind(message: Message) {
             messageTextView.text = message.content
             dateTimeTextView.text = message.content
-            // Set other views in the sent message layout if needed
         }
     }
 
@@ -177,7 +164,6 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bind(message: Message) {
             messageTextView.text = message.content
             dateTimeTextView.text = message.content
-            // Set other views in the received message layout if needed
         }
     }
 

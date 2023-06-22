@@ -32,13 +32,10 @@ class SignInActivity : AppCompatActivity() {
         textCreateNewAccount = findViewById(R.id.textCreateNewAccount)
 
         buttonSignIn.setOnClickListener {
-            // Get the email and password entered by the user
             val email = inputEmail.text.toString().trim()
             val password = inputPassword.text.toString().trim()
 
-            // Check if the email and password are valid
             if (isValidEmail(email) && isValidPassword(password)) {
-                // If the email and password are valid, check if they match the stored user credentials on the server
                 val url = "$serverUrl/login"
                 val jsonBody = JSONObject()
                 jsonBody.put(Constants.KEY_EMAIL, email)
@@ -50,14 +47,11 @@ class SignInActivity : AppCompatActivity() {
                         try {
                             val success = response.getBoolean("success")
                             if (success) {
-                                // If the user credentials are valid, show a toast message indicating successful login
                                 Toast.makeText(this, "Logged in successfully!", Toast.LENGTH_SHORT).show()
-                                // Start MainActivity
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
-                                finish() // Finish the SignInActivity to prevent going back to it after login
+                                finish()
                             } else {
-                                // If the user credentials are not valid, show an error message
                                 Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: JSONException) {
@@ -68,10 +62,8 @@ class SignInActivity : AppCompatActivity() {
                         Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show()
                     })
 
-                // Add the request to the RequestQueue.
                 Volley.newRequestQueue(this).add(request)
             } else {
-                // If the email or password is invalid, show an error message
                 Toast.makeText(this, "Please enter a valid email and password", Toast.LENGTH_SHORT).show()
             }
         }
@@ -82,13 +74,11 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    // Helper functions for checking email and password validity
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     private fun isValidPassword(password: String): Boolean {
-        // Password validation logic here, for example: check if password is at least 8 characters long
         return password.length >= 8
     }
 

@@ -29,7 +29,6 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonSignUp.setOnClickListener {
-            // Validate input fields
             if (binding.inputName.text.toString().isEmpty()) {
                 binding.inputName.error = getString(R.string.name)
                 return@setOnClickListener
@@ -51,15 +50,12 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Register user with input data
             val name = binding.inputName.text.toString()
             val email = binding.inputEmail.text.toString()
             val password = binding.inputPassword.text.toString()
 
-            // Create an instance of your user model class
             val user = encodedImage?.let { it1 -> User(name, email, password, it1) }
 
-            // Save the user data to SharedPreferences or your database
             if (user != null) {
                 registerUser(user)
             }
@@ -100,35 +96,27 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun registerUser(user: User) {
-        // Instantiate the RequestQueue
         val queue = Volley.newRequestQueue(this)
 
-        // Set up the URL and request headers
         val url = "http://ableytner.ddns.net:2006"
         val headers = HashMap<String, String>()
         headers["Content-Type"] = "application/json"
 
-        // Create the request body
         val requestBody = Gson().toJson(user)
 
-        // Create a POST request
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.POST,
             url,
             null,
             { response ->
-                // Handle the response from the server
                 val success = response.getBoolean("success")
                 if (success) {
-                    // Show registration success message
                     Toast.makeText(this, R.string.toast_registration_successful, Toast.LENGTH_SHORT)
                         .show()
 
-                    // Start SignInActivity upon successful registration
                     val intent = Intent(this, SignInActivity::class.java)
                     startActivity(intent)
 
-                    // Finish the current activity
                     finish()
                 } else {
                     val errorMessage = response.getString("message")
@@ -136,22 +124,18 @@ class SignUpActivity : AppCompatActivity() {
                 }
             },
             { error ->
-                // Handle errors that occurred while making the request
                 Toast.makeText(this, R.string.toast_registration_failure, Toast.LENGTH_SHORT).show()
                 error.printStackTrace()
             }) {
-            // Override the getBody method to return the request body
             override fun getBody(): ByteArray {
                 return requestBody.toByteArray()
             }
 
-            // Override the getHeaders method to return the request headers
             override fun getHeaders(): MutableMap<String, String> {
                 return headers
             }
         }
 
-        // Add the request to the RequestQueue
         queue.add(jsonObjectRequest)
     }
 }
